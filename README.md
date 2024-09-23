@@ -1,1 +1,1 @@
-# Django DRF CookieCutter Template
+# Django DRF Cookiecutter Template
