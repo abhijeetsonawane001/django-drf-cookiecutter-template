@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "{{cookiecutter.project_name}}"
+version = "{{ cookiecutter.version }}"
+description = "{{ cookiecutter.description }}"
+authors = ["{{cookiecutter.author_name}} <{{cookiecutter.author_email}}>"]
+readme = "README.md"
+packages = [{ include = "{{cookiecutter.project_slug}}" }]
+
+[tool.poetry.dependencies]
+python = "^{{ cookiecutter.python_version }}"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 89
+target-version = ['py36', 'py37', 'py38', 'py310', 'py311']
+include = '\.pyi?$'
+exclude = '''
+    /(
+        \.git
+        | \.hg
+        | \.mypy_cache
+        | \.tox
+        | \.venv
+        | _build
+        | buck-out
+        | build
+        | dist
+    )/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 89
+known_third_party = ["django", "environ"]
+known_first_party = ["{{cookiecutter.project_slug}}"]

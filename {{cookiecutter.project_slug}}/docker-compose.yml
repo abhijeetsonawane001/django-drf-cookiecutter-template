@@ -1,0 +1,70 @@
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8080:8000"
+    env_file:
+      - ".env"
+    volumes:
+      - .:/app
+    networks:
+      - {{cookiecutter.project_slug}}
+    depends_on:
+      - db
+
+  celery:
+    build: .
+    command: celery -A {{cookiecutter.project_slug}} worker -l INFO
+    volumes:
+      - .:/app
+    networks:
+      - {{cookiecutter.project_slug}}
+    depends_on:
+      - web
+      - redis
+
+  db:
+    image: postgres:16.3-alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=username
+      - POSTGRES_DB={{cookiecutter.project_slug}}
+    volumes:
+      - {{cookiecutter.project_slug}}_db:/var/lib/postgresql/data
+    networks:
+      - {{cookiecutter.project_slug}}
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+    networks:
+      - {{cookiecutter.project_slug}}
+
+  maildev:
+    image: maildev/maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    networks:
+      - {{cookiecutter.project_slug}}
+
+  redis:
+    image: redis:7.2.5-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - {{cookiecutter.project_slug}}
+
+
+volumes:
+  {{cookiecutter.project_slug}}_db:
+
+networks:
+  {{cookiecutter.project_slug}}:
